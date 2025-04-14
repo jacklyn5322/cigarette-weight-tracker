@@ -26,27 +26,30 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 40px;
+      font-size: 36px;
       font-weight: bold;
       color: white;
       text-shadow: 2px 2px 8px black;
+      white-space: nowrap;
+    }
+    #totalNumber.animate {
+      display: inline-block;
+      animation: flipIn 0.5s ease-in-out;
     }
 
-    /* 翻轉動畫 */
     @keyframes flipIn {
       0% { transform: rotateX(0deg); opacity: 0.5; }
       50% { transform: rotateX(90deg); opacity: 0; }
       100% { transform: rotateX(0deg); opacity: 1; }
-    }
-    .number-overlay.animate {
-      animation: flipIn 0.5s ease-in-out;
     }
   </style>
 </head>
 <body>
   <div class="progress-box">
     <img src="https://i.imgur.com/96nGuLs.jpg" alt="統計背景圖">
-    <div class="number-overlay" id="totalAmount">載入中...</div>
+    <div class="number-overlay">
+      目前累積菸蒂重量：<span id="totalNumber">載入中...</span> 公克
+    </div>
   </div>
 
   <script>
@@ -57,22 +60,22 @@
           return res.json();
         })
         .then(data => {
-          const totalEl = document.getElementById("totalAmount");
+          const numberEl = document.getElementById("totalNumber");
           const formatted = Number(data.total).toLocaleString();
 
-          totalEl.classList.remove("animate");
-          void totalEl.offsetWidth; // 強制 reflow 讓動畫生效
-          totalEl.innerText = `目前累積菸蒂重量：${formatted} 公克`;
-          totalEl.classList.add("animate");
+          numberEl.classList.remove("animate");
+          void numberEl.offsetWidth; // 強制 reflow
+          numberEl.innerText = formatted;
+          numberEl.classList.add("animate");
         })
         .catch(error => {
-          document.getElementById("totalAmount").innerText = "⚠ 錯誤：無法取得資料";
+          document.getElementById("totalNumber").innerText = "⚠ 無法取得";
           console.error("Fetch error:", error);
         });
     }
 
     updateTotal(); // 初次載入
-    setInterval(updateTotal, 30000); // 每30秒更新一次
+    setInterval(updateTotal, 5000); // 每 5 秒更新一次
   </script>
 </body>
 </html>
