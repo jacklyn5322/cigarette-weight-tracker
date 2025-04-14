@@ -1,14 +1,25 @@
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>2025 世界環境日｜累積菸蒂重量統計</title>
   <style>
+    body {
+      font-family: "Microsoft JhengHei", "Helvetica", "Arial", sans-serif;
+      background-color: #f4f4f4;
+      text-align: center;
+      padding: 2rem;
+    }
     .progress-box {
       position: relative;
       display: inline-block;
       max-width: 800px;
+      width: 100%;
+    }
+    .progress-box img {
+      width: 100%;
+      border-radius: 12px;
     }
     .number-overlay {
       position: absolute;
@@ -20,11 +31,21 @@
       color: white;
       text-shadow: 2px 2px 8px black;
     }
+
+    /* 翻轉動畫 */
+    @keyframes flipIn {
+      0% { transform: rotateX(0deg); opacity: 0.5; }
+      50% { transform: rotateX(90deg); opacity: 0; }
+      100% { transform: rotateX(0deg); opacity: 1; }
+    }
+    .number-overlay.animate {
+      animation: flipIn 0.5s ease-in-out;
+    }
   </style>
 </head>
 <body>
   <div class="progress-box">
-    <img src="https://i.imgur.com/96nGuLs.jpg" style="width: 100%;">
+    <img src="https://i.imgur.com/96nGuLs.jpg" alt="統計背景圖">
     <div class="number-overlay" id="totalAmount">載入中...</div>
   </div>
 
@@ -36,7 +57,13 @@
           return res.json();
         })
         .then(data => {
-          document.getElementById("totalAmount").innerText = `目前累積菸蒂重量：${data.total} 公克`;
+          const totalEl = document.getElementById("totalAmount");
+          const formatted = Number(data.total).toLocaleString();
+
+          totalEl.classList.remove("animate");
+          void totalEl.offsetWidth; // 強制 reflow 讓動畫生效
+          totalEl.innerText = `目前累積菸蒂重量：${formatted} 公克`;
+          totalEl.classList.add("animate");
         })
         .catch(error => {
           document.getElementById("totalAmount").innerText = "⚠ 錯誤：無法取得資料";
