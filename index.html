@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>2025 世界環境日｜累積菸蒂重量統計</title>
+  <style>
+    .progress-box {
+      position: relative;
+      display: inline-block;
+      max-width: 800px;
+    }
+    .number-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 40px;
+      font-weight: bold;
+      color: white;
+      text-shadow: 2px 2px 8px black;
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-box">
+    <img src="https://i.imgur.com/96nGuLs.jpg" style="width: 100%;">
+    <div class="number-overlay" id="totalAmount">載入中...</div>
+  </div>
+
+  <script>
+    function updateTotal() {
+      fetch("https://script.google.com/macros/s/AKfycbxfF-wMDbjKE2bZKq129zZS55YPJ_uVVFZXONFQzH_u4H0vE5zzoiubviqeJq6DI2Gb/exec")
+        .then(res => {
+          if (!res.ok) throw new Error('API 回應失敗');
+          return res.json();
+        })
+        .then(data => {
+          document.getElementById("totalAmount").innerText = `目前累積菸蒂重量：${data.total} 公克`;
+        })
+        .catch(error => {
+          document.getElementById("totalAmount").innerText = "⚠ 錯誤：無法取得資料";
+          console.error("Fetch error:", error);
+        });
+    }
+
+    updateTotal(); // 初次載入
+    setInterval(updateTotal, 30000); // 每30秒更新一次
+  </script>
+</body>
+</html>
